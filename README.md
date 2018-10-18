@@ -31,8 +31,7 @@ These are all fired in `document`. Check out the source if you're ever confused.
 # BUT WHAT ABOUT BUILDING!!!!!!!!!!!!!!
 [jsdelivr should give you a usable version of this](https://www.jsdelivr.com/package/npm/light-pjax), but if it doesn't...
 * Run `npm install` after cloning the repo (if this doesn't work then report it!!!!!!!!! like, now!!!! then that means that i ACTUALLY did something wrong)
-* After that, run `npm run prepare`!!!! (or `npm run build` works just fine too)
-* An ES6, un-minified version of the script with all of the comments will output in `dist/light-pjax.js`, I think.
+* After that, run `npm run prepare` to generate a (not very well) minified, ES5 version of the script, and `npm run build` will generate an un-minified ES6 version of the script. It's outputted to `dist/light-pjax.js`.
 * Don't try using the raw `src/light-pjax.js`, that's the source, typed with Flow.
 
 # Anything else?
