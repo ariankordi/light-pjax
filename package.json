@@ -1,0 +1,24 @@
+{
+  "name": "light-pjax",
+  "version": "1.0.0",
+  "description": "A lightweight implementation of jquery-pjax, designed to be simple and fast",
+  "main": "dist/light-pjax.js",
+  "scripts": {
+    "flow": "flow",
+    "build": "echo 'Press Ctrl+C to exit.'; babel src/ -d dist/ --watch",
+    "prepare": "babel src/ -d dist/"
+  },
+  "keywords": [
+    "pjax",
+    "ajax",
+    "xhr",
+    "pushstate"
+  ],
+  "author": "Arian K. (ariankordi)",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.83.0"
+  }
+}
