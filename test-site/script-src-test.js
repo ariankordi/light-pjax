@@ -1,1 +1,1 @@
-alert('woo script src thing worked');
+console.log('woo script src thing worked');

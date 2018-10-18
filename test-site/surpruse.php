@@ -53,7 +53,6 @@ writeHeader('et ce tra');
 			cakeButton.removeEventListener('click', cakeButtonClickFunc);
 			reloadButton.removeEventListener('click', reloadLinkClickFunc);
 		})*/
-		ereoiuroief';[;]
 	</script>
 </div>
 <?php
