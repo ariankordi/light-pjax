@@ -14,6 +14,7 @@ var pjax: {
 	// This is the function creating the actual XHR, it's used internally in linkClickFunc.
 	go: (urlToVisit: string, dontDoPushState?: bool) => void,
 	// alright then here's some lame internal stuff
+	currentXHR: XMLHttpRequest,
 	// loadedJSFiles is an array used to track the external JS files loaded in the container.
 	// With pjax, external JS is only loaded once, so be sure to handle that.
 	loadedJSFiles: Array<string>,
@@ -59,7 +60,7 @@ var pjax: {
 		// Here's popstate, it'll run when the state changes, aka when back/forward buttons are hit.
 		// It doesn't actually tell you when back/forward is hit though, it's only the state.
 		window.addEventListener('popstate', event => {
-			event.preventDefault();
+			//event.preventDefault();
 			//console.log('yay popstate')
 			//console.log(location)
 			//console.log(history.state)
@@ -100,21 +101,49 @@ var pjax: {
 	go(urlToVisit: string, dontDoPushState?: bool) {
 		// Let's make our XHR!
 		// Maybe todo: Make the XHR global so that it doesn't have to be created every time???? I don't know
-		var xhr: XMLHttpRequest = new XMLHttpRequest();
+		//var xhr: XMLHttpRequest = new XMLHttpRequest();
+		if(this.currentXHR !== undefined) {
+			this.currentXHR.abort();
+		}
+		this.currentXHR = new XMLHttpRequest();
 		// Let's declare some events here too, for dispatching later.
 		// startEvent will be dispatched just before the XHR starts, after it's all set up.
-		const startEvent: Event = new Event('pjax:start');
+		//const startEvent: Event = new Event('pjax:start');
 		// There's another event, errorEvent, that will be dispatched when there's an XHR error, or if there's a code other than 200 returned.
 		// That itself won't do anything when there's an error, it's up to you to handle this completely yourself.
 		// It's created in either onXHRLoad if there's a bad HTTP status, or in onXHRError.
 		// doneEvent will be dispatched once the XHR is done and right after the document is replaced.
-		const doneEvent: Event = new Event('pjax:done');
+		//const doneEvent: Event = new Event('pjax:done');
 		// This is the handler called when the XHR loads.
 		// All of the "magic" is done here, including dispatching the events, calling JS, and calling bindLinks again.
-		const onXHRLoad: () => void = () => {
+		//const onXHRLoad: () => void = () => {
+			//xhr.removeEventListener('load', onXHRLoad);
+		//}
+		// I almost forgot, we had to make an error handler, too. This handler will not navigate to the next page.
+		// The purpose of an error is just to call the error event, and let the application itself handle it.
+		// I considered making this just do a "raw" reload when there's an error, but you could do that yourself if you wanted to.
+		const onXHRError: () => void = () => {
+			// Make this error and dispatch it, with the XHR itself as the data
+			//const errorEvent: CustomEvent = new CustomEvent('pjax:error', {detail: xhr});
+			document.dispatchEvent(
+				new CustomEvent('pjax:error', {detail: this.currentXHR})
+			);
+		}
+		// The XHR will now be set up, as normal.
+		// We're appending a new _pjax param to urlToVisit before we send it, but check if there's already some query params in it first
+		// The _pjax parameter contains a timestamp, we're adding this because uhhhhhhhhh cache
+		// If the URL doesn't contain any question marks, then use a question mark, otherwise use an and sign
+		this.currentXHR.open('GET', urlToVisit + ((urlToVisit.indexOf('?') < 0) ? '?' : '&') + '_pjax=' + new Date().getTime());
+		// This X-PJAX header is sent because it's supposed to.
+		this.currentXHR.setRequestHeader('X-PJAX', '1');
+		// Set the responseType to document, so that the HTML returned will actually be parsed and returned.
+		// This is needed, or else, only the HTML recieved from the server will be recieved.
+		this.currentXHR.responseType = 'document';
+		// Now add an event listener for load to our handler function, just before the XHR is sent.
+		this.currentXHR.addEventListener('load', () => {
 			//console.log(xhr)
 			// Hold on, first check the status code. See if it's over 399, so basically 400 and above.
-			if(xhr.status > 399) {
+			if(this.currentXHR.status > 399) {
 				// Whoops, there's an error! Return so that nothing happens, but make an error event and dispatch it.
 				onXHRError();
 				return;
@@ -127,7 +156,7 @@ var pjax: {
 			newDocument.body = newDocument.getElementsByTagName('body')[0];*/
 			// The XHR is loaded now (without errors), and hopefully the HTML is loaded correctly.
 			// First, change the title so that the user notices it first. This is easy.
-			document.title = xhr.response.title;
+			document.title = this.currentXHR.response.title;
 			// Do a pushState, which will actually tell the browser that we're on a new page.
 			// We'll update the title, and the URL with what we've recieved. I don't know what the first arg is for.
 			//if(dontDoPushState !== true) {
@@ -135,8 +164,8 @@ var pjax: {
 				history.pushState([urlToVisit,
 					window.pageXOffset,
 					window.pageYOffset,
-					xhr.response.title,
-					xhr.response.body.innerHTML
+					this.currentXHR.response.title,
+					this.currentXHR.response.body.innerHTML
 				], '', urlToVisit);
 			//}
 			// we don't need to do this lol
@@ -153,7 +182,7 @@ var pjax: {
 			var targetContainer: any = document.getElementById(this.containerID);
 			// Now, set the container to the INSIDE OF THE RESPONSE, since we're assuming that it's being done right.
 			// xhr.response.body.innerHTML is supposed to be the inside of the container that's being replaced.
-			targetContainer.innerHTML = xhr.response.body.innerHTML;
+			targetContainer.innerHTML = this.currentXHR.response.body.innerHTML;
 			// The HTML is loaded, but now we need to load the JS on the page, so let's go through this.
 			this.execScriptsFunc.bind(this)(targetContainer);
 			// Finally, bind PJAX links here. We're done!
@@ -162,35 +191,23 @@ var pjax: {
 			window.scrollTo(0, 0);
 			// Since we're completely done, let's dispatch the done event, since we're done. I wanted to do this before, but then we wouldn't truly be done.
 			// We are truly done now.
-			document.dispatchEvent(doneEvent);
-			//xhr.removeEventListener('load', onXHRLoad);
-		}
-		// I almost forgot, we had to make an error handler, too. This handler will not navigate to the next page.
-		// The purpose of an error is just to call the error event, and let the application itself handle it.
-		// I considered making this just do a "raw" reload when there's an error, but you could do that yourself if you wanted to.
-		const onXHRError: () => void = () => {
-			// Make this error and dispatch it, with the XHR itself as the data
-			const errorEvent: CustomEvent = new CustomEvent('pjax:error', xhr);
-			document.dispatchEvent(errorEvent);
-		}
-		// The XHR will now be set up, as normal.
-		// We're appending a new _pjax param to urlToVisit before we send it, but check if there's already some query params in it first
-		// The _pjax parameter contains a timestamp, we're adding this because uhhhhhhhhh cache
-		// If the URL doesn't contain any question marks, then use a question mark, otherwise use an and sign
-		xhr.open('GET', urlToVisit + ((urlToVisit.indexOf('?') < 0) ? '?' : '&') + '_pjax=' + new Date().getTime());
-		// This X-PJAX header is sent because it's supposed to.
-		xhr.setRequestHeader('X-PJAX', '1');
-		// Set the responseType to document, so that the HTML returned will actually be parsed and returned.
-		// This is needed, or else, only the HTML recieved from the server will be recieved.
-		xhr.responseType = 'document';
-		// Now add an event listener for load to our handler function, just before the XHR is sent.
-		xhr.addEventListener('load', onXHRLoad);
+			document.dispatchEvent(
+				new Event('pjax:done')
+			);
+		});
 		// Add another event listener, this time for the error handling stuff.
-		xhr.addEventListener('error', onXHRError);
+		this.currentXHR.addEventListener('error', onXHRError);
+		this.currentXHR.addEventListener('abort', () => {
+			document.dispatchEvent(
+				new CustomEvent('pjax:abort')
+			);
+		});
 		// Dispatch the start event, pjax:start...
-		document.dispatchEvent(startEvent);
+		document.dispatchEvent(
+			new Event('pjax:start')
+		);
 		// Finally, send the XHR!
-		xhr.send();
+		this.currentXHR.send();
 	},
 	bindLinks() {
 		// First, make a wrapper of linkClickFunc that has this properly set.
@@ -256,7 +273,7 @@ var pjax: {
 		// Here's our raw href that we'll be using.
 		// Tip: getAttribute is faster and more accurate than just using the .href property. https://www.measurethat.net/Benchmarks/Show/4009/0/using-getattribute-vs-property-to-access-an-elements-hr
 		// $FlowFixMe
-		const urlToVisit: string = event.target.getAttribute('href');
-		this.go(urlToVisit);
+		//const urlToVisit: string = event.target.getAttribute('href');
+		this.go(event.target.getAttribute('href'));
 	}
 }

@@ -25,8 +25,10 @@ Look at the test-site directory for an example in PHP, it might help you. (the m
 This emits events, too, in case you want a cool page loading animation or something like that.
 * **`pjax:start`** is emitted when the XHR has started but not finished.
 * **`pjax:done`** is emitted when the XHR is actually finished and the document has been loaded.
-* **`pjax:error`** is emitted on an XHR error or a bad response code. It has the XHR itself as a parameter so that you can use it. Error handling is up to you, pjax will not do anything when there's an error, it'll just do nothing.
+* **`pjax:error`** is emitted on an XHR error or a bad response code. Error handling is up to you, pjax will not do anything when there's an error, it'll just do nothing.
+* **`pjax:abort`** is emitted when an XHR is aborted.
 These are all fired in `document`. Check out the source if you're ever confused.
+If you need the XHR itself, it's in `pjax.currentXHR`.
 
 # BUT WHAT ABOUT BUILDING!!!!!!!!!!!!!!
 [jsdelivr should give you a usable version of this](https://www.jsdelivr.com/package/npm/light-pjax), but if it doesn't...

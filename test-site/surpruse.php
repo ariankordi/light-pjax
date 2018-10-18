@@ -1,6 +1,9 @@
 <?php
 include('layout.php');
 writeHeader('et ce tra');
+// sleep for 750 ms
+usleep(750000);
+//http_response_code(404);
 ?><!-- i'm putting this inside of a container element and you should too -->
 <div>
 	<!-- omg an external script :O -->
