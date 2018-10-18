@@ -28,5 +28,12 @@ This emits events, too, in case you want a cool page loading animation or someth
 * **`pjax:error`** is emitted on an XHR error or a bad response code. It has the XHR itself as a parameter so that you can use it. Error handling is up to you, pjax will not do anything when there's an error, it'll just do nothing.
 These are all fired in `document`. Check out the source if you're ever confused.
 
+# BUT WHAT ABOUT BUILDING!!!!!!!!!!!!!!
+[jsdelivr should give you a usable version of this](https://www.jsdelivr.com/package/npm/light-pjax), but if it doesn't...
+* Run `npm install` after cloning the repo (if this doesn't work then report it!!!!!!!!! like, now!!!! then that means that i ACTUALLY did something wrong)
+* After that, run `npm run prepare`!!!! (or `npm run build` works just fine too)
+* An ES6, un-minified version of the script with all of the comments will output in `dist/light-pjax.js`, I think.
+* Don't try using the raw `src/light-pjax.js`, that's the source, typed with Flow.
+
 # Anything else?
 This is pretty incomplete, missing a lot of things, especially forgetting error handling, so if you need some of these features I guess you could make a pull request and I'll try my best to satisfy.
