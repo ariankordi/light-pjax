@@ -95,6 +95,10 @@ var pjax: {
 			// Scroll to the state's scroll position.
 			window.scrollTo(history.state[1], history.state[2]);
 			history.replaceState(history.state, '', history.state[0]);
+			// Dispatch popstate_done, so that external scripts can do whatever when popstate is done.
+			document.dispatchEvent(
+				new Event('pjax:popstate_done')
+			);
 		});
 		this.bindLinks();
 	},
