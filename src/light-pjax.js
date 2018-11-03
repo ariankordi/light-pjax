@@ -34,7 +34,7 @@ var pjax: {
 	// loadedJSFiles is a list of scripts that have already been loaded, and won't be loaded again.
 	loadedJSFiles: [],
 	listen() {
-		console.log('listen called')
+		//console.log('listen called')
 		/*const initialLoadFunc = () => {
 			const currentDocumentCopy = document.cloneNode(true);
 			history.replaceState([location.href,
@@ -61,7 +61,7 @@ var pjax: {
 		// Here's popstate, it'll run when the state changes, aka when back/forward buttons are hit.
 		// It doesn't actually tell you when back/forward is hit though, it's only the state.
 		window.addEventListener('popstate', event => {
-			console.log('there was popstate')
+			//console.log('there was popstate')
 			//event.preventDefault();
 			//console.log('yay popstate')
 			//console.log(location)
