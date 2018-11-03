@@ -39,5 +39,11 @@ If you need the XHR itself for error handling or something, it's in `pjax.curren
 * After that, run `npm run prepare` to generate a (not very well) minified, ES5 version of the script, and `npm run build` will generate an un-minified ES6 version of the script. It's outputted to `dist/light-pjax.js`.
 * Don't try using the raw `src/light-pjax.js`, that's the source, typed with Flow.
 
+# FAQ?
+## Help me my site is weird and for some reason events multiply and stuff please help me.
+I put this here because I ran into this very problem - Every script in your container is executed on each page, so **make sure you aren't calling `listen()` from a script element *in your container***.
+## uhhh sorry i couldn't come up with any other problems
+do your own debugging if you have any problems lol
+
 # Anything else?
 This is pretty incomplete, missing a lot of things, especially forgetting error handling, so if you need some of these features I guess you could make a pull request and I'll try my best to satisfy.

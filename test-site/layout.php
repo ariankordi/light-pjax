@@ -83,7 +83,9 @@ function writeFooter() {
 	if(!$has_pjax) {
 	// Now, print the footer if there's no PJAX.
 	?>
+	</div>
 	<!-- Put the magic script here, and a little more JS to make it actually work. -->
+	<!-- Make sure this is OUTSIDE OF THE CONTAINER!!!!!!!!!! Otherwise, listen() will be called multiple times and you will get undefined behavior from that. -->
 	<script src="light-pjax.js"></script>
 	<script>
 		// containerID must be the ID of the container, without #!!!
@@ -93,7 +95,6 @@ function writeFooter() {
 		// and then after that, just call listen with no args and it'll work
 		pjax.listen();
 	</script>
-	</div>
 </body>
 </html><?php
 	}
