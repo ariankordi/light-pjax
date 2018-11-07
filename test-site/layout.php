@@ -73,7 +73,7 @@ function writeHeader(string $title = null) {
 	</pre>
 	<div id="container">
 		<?php
-		// IMPORTANT! The container is #main, but the INSIDE of that container will be returned.
+		// IMPORTANT! The container is #container, but the INSIDE of that container will be returned.
 		}
 		// But, now output the body, if there's PJAX or not.
 }
