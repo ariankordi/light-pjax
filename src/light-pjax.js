@@ -270,7 +270,7 @@ var pjax: {
 		// If so, great! If not, we'll have to iterate through its parents until we find one that does.
 		var target = event.target;
 		if(typeof target.host === 'undefined') {
-			target.path.some(function(element) {
+			event.path.some(function(element) {
 				if(typeof element.host !== 'undefined') {
 					target = element;
 					return true;
