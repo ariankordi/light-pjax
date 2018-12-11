@@ -266,12 +266,24 @@ var pjax: {
 		}
 	},
 	linkClickFunc(event: Event) {
-		// First, check if the link is absolute, and if it is, then just return and don't prevent default.
+		// First, check if the element clicked actually has a host set.
+		// If so, great! If not, we'll have to iterate through its parents until we find one that does.
+		var target = event.target;
+		if(typeof target.host === 'undefined') {
+			target.path.some(function(element) {
+				if(typeof element.host !== 'undefined') {
+					target = element;
+					return true;
+				}
+			});
+		}
+
+		// Next, check if the link is absolute, and if it is, then just return and don't prevent default.
 		// This will make it so that absolute links, including external links, will just go to the external page.
 		// We'll do this by comparing event.target.host, the anchor link's host, with location.host. So...
 		// (doing a negative comparison to prevent using an else)
 		// $FlowFixMe just kidding this event listener will only be called to anchor elements
-		if(event.target.host !== location.host) {
+		if(target.host !== location.host) {
 			return;
 		}
 		// Nice, at this point, we should be visiting a link with the same host as the one we're on now.
@@ -280,7 +292,7 @@ var pjax: {
 		// Here's our raw href that we'll be using.
 		// Tip: getAttribute is faster and more accurate than just using the .href property. https://www.measurethat.net/Benchmarks/Show/4009/0/using-getattribute-vs-property-to-access-an-elements-hr
 		// $FlowFixMe
-		//const urlToVisit: string = event.target.getAttribute('href');
-		this.go(event.target.getAttribute('href'));
+		//const urlToVisit: string = target.getAttribute('href');
+		this.go(target.getAttribute('href'));
 	}
 }
