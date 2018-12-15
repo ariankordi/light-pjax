@@ -270,8 +270,10 @@ var pjax: {
 		// This will make it so that absolute links, including external links, will just go to the external page.
 		// We'll do this by comparing event.target.host, the anchor link's host, with location.host. So...
 		// (doing a negative comparison to prevent using an else)
+
+		// Also, apparently using event.target won't work if you're clicking on something nested in an anchor. The currentTarget in this case will be the anchor but the target will just be the element that's nested in the anchor, which doesn't have the href and isn't what you want.
 		// $FlowFixMe just kidding this event listener will only be called to anchor elements
-		if(event.target.host !== location.host) {
+		if(event.currentTarget.host !== location.host) {
 			return;
 		}
 		// Nice, at this point, we should be visiting a link with the same host as the one we're on now.
@@ -281,6 +283,6 @@ var pjax: {
 		// Tip: getAttribute is faster and more accurate than just using the .href property. https://www.measurethat.net/Benchmarks/Show/4009/0/using-getattribute-vs-property-to-access-an-elements-hr
 		// $FlowFixMe
 		//const urlToVisit: string = event.target.getAttribute('href');
-		this.go(event.target.getAttribute('href'));
+		this.go(event.currentTarget.getAttribute('href'));
 	}
 }

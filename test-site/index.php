@@ -10,7 +10,17 @@ writeHeader();
 	<li><a href="surpruse.php">surprise</a></li>
 </ul>
 
-<a>yeet here's an anchor without a href LOL</a>
+<div>
+	<a>yeet here's an anchor without a href LOL</a>
+</div>
+
+<div>
+	<a><a href="?first">anchor with a link</a> inside of an anchor without a link?</a>
+</div>
+
+<div>
+	<a href="?second">an anchor, then <a href="?third">another anchor</a></a>
+</div>
 
 <p>
   pjax loads html from your server into the current page
@@ -25,6 +35,12 @@ writeHeader();
 <p>
   Whenever the time changes, a full page load has happened.
   If the time doesn't change,  no full page load has occurred.
+</p>
+
+<p>
+	<a href="?fourth">
+		<span>href to ?fourth...</span>
+	</a>
 </p>
 
 <p>
