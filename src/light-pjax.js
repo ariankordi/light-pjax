@@ -12,7 +12,7 @@ var pjax: {
 	listen: () => void,
 	// go will manually navigate to a page. You can use this to reload, or manually go to a page via your JS.
 	// This is the function creating the actual XHR, it's used internally in linkClickFunc.
-	go: (urlToVisit: string, dontDoPushState?: bool) => void,
+	go: (urlToVisit: string) => void,
 	// alright then here's some lame internal stuff
 	currentXHR: XMLHttpRequest,
 	// loadedJSFiles is an array used to track the external JS files loaded in the container.
@@ -105,7 +105,7 @@ var pjax: {
 		});
 		this.bindLinks();
 	},
-	go(urlToVisit: string, dontDoPushState?: bool) {
+	go(urlToVisit: string) {
 		// Let's make our XHR!
 		// Maybe todo: Make the XHR global so that it doesn't have to be created every time???? I don't know
 		//var xhr: XMLHttpRequest = new XMLHttpRequest();
@@ -137,10 +137,11 @@ var pjax: {
 			);
 		}
 		// The XHR will now be set up, as normal.
-		// We're appending a new _pjax param to urlToVisit before we send it, but check if there's already some query params in it first
-		// The _pjax parameter contains a timestamp, we're adding this because uhhhhhhhhh cache
-		// If the URL doesn't contain any question marks, then use a question mark, otherwise use an and sign
-		this.currentXHR.open('GET', urlToVisit + ((urlToVisit.indexOf('?') < 0) ? '?' : '&') + '_pjax=' + new Date().getTime());
+		// A question mark will be added to the end of the URL if there isn't already one, this is to ensure that the browser won't treat this XHR as an actual page.
+		// Without this question mark, if you navigated to a page with pjax, closed and then re-opened the tab, it would show the pag with only the content from the XHR, so no styling and the page is incomplete. That's what this tries to solve.
+		// You could just add some "_pjax=true" query parameter too or whatever instead of just a question mark
+		this.currentXHR.open('GET', urlToVisit + (urlToVisit.indexOf('?') < 0 ? '?' : ''));
+		//this.currentXHR.open('GET', urlToVisit + ((urlToVisit.indexOf('?') < 0) ? '?' : '&') + '_pjax=' + new Date().getTime());
 		// This X-PJAX header is sent because it's supposed to.
 		this.currentXHR.setRequestHeader('X-PJAX', '1');
 		// Set the responseType to document, so that the HTML returned will actually be parsed and returned.

@@ -1,6 +1,6 @@
 {
   "name": "light-pjax",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A lightweight implementation of jquery-pjax, designed to be simple and fast",
   "main": "dist/light-pjax.js",
   "repository": {
